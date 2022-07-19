@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include <ctype.h>
 #include "getInput.c"
 #include "textDisplay.c"
@@ -12,7 +13,7 @@ int main(int argc, char* argv[]) {
     printf("%s", introString);
     printf("%s\n\n", functionString);
 
-    
+
 
     do {
         printf("Enter command: ");
