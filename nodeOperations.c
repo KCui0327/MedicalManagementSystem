@@ -3,7 +3,7 @@
 #include <ctype.h>
 #include <stdbool.h>
 #include <string.h>
-#include "list.c"
+#include "node.c"
 
 Node* createNode(char *familyName, char *firstName, char *address, char *phoneNumber, char *status, char *condition) {
     Node *newNode = (Node *)malloc(sizeof(Node));
@@ -32,7 +32,7 @@ void printNode(LinkedList *list) {
     }
 }
 
-bool uisEmpty(LinkedList *list) {
+bool isEmpty(LinkedList *list) {
     return list->head == NULL;
 }
 

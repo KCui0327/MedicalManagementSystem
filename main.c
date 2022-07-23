@@ -3,11 +3,8 @@
 #include <ctype.h>
 #include "getInput.c"
 #include "textDisplay.c"
-#include "list.c"
 #include "nodeOperations.c"
 #define MAX_SIZE 1000
-
-void getCommand(char *input, int inputSize);
 
 int main(int argc, char* argv[]) {
     char input[MAX_SIZE + 1], command;
@@ -33,19 +30,7 @@ int main(int argc, char* argv[]) {
 
         switch(command) {
             case 'I':
-                printf("\n  Family name: ");
-                getCommand(familyName, MAX_SIZE);
-                printf("  First name: ");
-                getCommand(firstName, MAX_SIZE);
-                printf("  Address: ");
-                getCommand(address, MAX_SIZE);
-                printf("  Phone number: ");
-                getCommand(phoneNumber, MAX_SIZE);
-                printf("  Status: ");
-                getCommand(status, MAX_SIZE);
-                printf("  Condition: ");
-                getCommand(condition, MAX_SIZE);
-
+                getInputNode(familyName, firstName, address, phoneNumber, doctorName, status, condition);
                 // insertNodeInOrder(list, familyName, firstName, address, phoneNumber, status, condition);
                 break;
             case 'D':
