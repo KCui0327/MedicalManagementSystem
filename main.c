@@ -19,12 +19,17 @@ typedef struct linkedList {
 } LinkedList;
 
 void getCommand(char *input, int inputSize);
-void getInputNode(char *familyName, char *firstName, char *address, char *phoneNumber, char *doctorName, char *status, char *condition);
+void getInputNode(
+            char *familyName, char *firstName, char *address,
+            char *phoneNumber, char *doctorName, char *status, char *condition
+        );
 Node* createNode(char *familyName, char *firstName, char *address, char *phoneNumber, char *status, char *condition);
 void printNode(LinkedList *list);
 bool isEmpty(LinkedList *list);
-void addNodeFront(LinkedList *list, char *familyName, char *firstName, char *address, char *phoneNumber, char *status, char *condition);
-
+void addNodeFront(
+            LinkedList *list, char *familyName, char *firstName,
+            char *address, char *phoneNumber, char *status, char *condition
+        );
 
 int main(int argc, char* argv[]) {
     char input[MAX_SIZE + 1], command;
@@ -32,7 +37,8 @@ int main(int argc, char* argv[]) {
     const char introString[] 
     = "Medical Management System.\n\n";
 const char functionString[] 
-    = "List of Commands: \n\t - Insert (I) \n\t - Delete (D) \n\t - S (search by name) \n\t - P (search by phone number) \n\t - Print (P) \n\t - Reset (R) \n\t - Exit (E)";
+    = "List of Commands: \n\t - Insert (I) \n\t - Delete (D) \n\t - S (search by name) \n\t "
+      "- P (search by phone number) \n\t - Print (P) \n\t - Reset (R) \n\t - Exit (E)";
 
     LinkedList *list = (LinkedList *)malloc(sizeof(LinkedList));
     list->head = NULL;
@@ -83,7 +89,10 @@ void getCommand(char *input, int inputSize) {
     input[i] = '\0';
 }
 
-void getInputNode(char *familyName, char *firstName, char *address, char *phoneNumber, char *doctorName, char *status, char *condition) {
+void getInputNode(
+        char *familyName, char *firstName, char *address,
+        char *phoneNumber, char *doctorName, char *status, char *condition
+        ) {
     printf("\n  Family name: ");
     getCommand(familyName, MAX_SIZE);
     printf("  First name: ");
@@ -129,7 +138,11 @@ bool isEmpty(LinkedList *list) {
     return list->head == NULL;
 }
 
-void addNodeFront(LinkedList *list, char *familyName, char *firstName, char *address, char *phoneNumber, char *status, char *condition) {
+void addNodeFront(
+            LinkedList *list, char *familyName, char *firstName,
+            char *address, char *phoneNumber, char *status, char *condition
+        ) {
+
     if (isEmpty(list)) {
         list->head = createNode(familyName, firstName, address, phoneNumber, status, condition);
         return;
