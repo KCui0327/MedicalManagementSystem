@@ -61,7 +61,11 @@ const char functionString[]
         switch(command) {
             case 'I':
                 getInputNode(familyName, firstName, address, phoneNumber, doctorName, status, condition);
-                // insertNodeInOrder(list, familyName, firstName, address, phoneNumber, status, condition);
+                if (searchFamilyName(list, familyName)) {
+                    addNodeFront(list, familyName, firstName, address, phoneNumber, status, condition);
+                } else {
+                    printf("\nFamily name already exists.\n");
+                }
                 break;
             case 'D':
                 break;
@@ -153,4 +157,95 @@ void addNodeFront(
         temp->next = list->head;
         list->head = temp;
     }
+}
+
+void addNodeInorder(
+            LinkedList *list, char *familyName, char *firstName,
+            char *address, char *phoneNumber, char *status, char *condition
+        ) {
+
+    if (isEmpty(list) || strcmp(familyName, list->head->familyName) < 0) {
+        return addNodeFront(list, familyName, firstName, address, phoneNumber, status, condition);
+    }
+    Node *newNode = createNode(familyName, firstName, address, phoneNumber, status, condition);
+    if (newNode == NULL) {
+        Node *currentNode = list->head;
+        while (currentNode != NULL) {
+            if (strcmp(familyName, currentNode->familyName) < 0) {
+                break;
+            }
+            currentNode = currentNode->next;
+        }
+        newNode->next = currentNode->next;
+        currentNode->next = newNode;
+        return;
+    }
+}
+
+bool searchFamilyName(LinkedList *list, char *familyName) {
+    Node *currentNode = list->head;
+    while (currentNode != NULL) {
+        if (strcmp(familyName, currentNode->familyName) == 0) {
+            return true;
+        }
+        currentNode = currentNode->next;
+    }
+    return false;
+}
+
+bool searchPhoneNumber(LinkedList *list, char *phoneNumber) {
+    Node *currentNode = list->head;
+    while (currentNode != NULL) {
+        if (strcmp(phoneNumber, currentNode->phoneNumber) == 0) {
+            return true;
+        }
+        currentNode = currentNode->next;
+    }
+    return false;
+}
+
+bool deleteFamilyName(LinkedList *list, char *familyName) {
+    if (isEmpty(list)) {
+        return false;
+    }
+    if (strcmp(familyName, list->head->familyName) == 0) {
+        Node *temp = list->head;
+        list->head = list->head->next;
+        free(temp);
+        return true;
+    }
+    Node *currentNode = list->head;
+    while (currentNode->next != NULL) {
+        if (strcmp(familyName, currentNode->next->familyName) == 0) {
+            Node *temp = currentNode->next;
+            currentNode->next = currentNode->next->next;
+            free(temp);
+            return true;
+        }
+        currentNode = currentNode->next;
+    }
+    return false;
+}
+
+void deleteFrontNode(
+            LinkedList *list, char *familyName, char *firstName,
+            char *address, char *phoneNumber, char *status, char *condition
+        ) {
+    if (isEmpty(list)) {
+        return;
+    }
+    Node *temp = list->head;
+    list->head = list->head->next;
+    free(temp);
+}
+
+void removeNodes(
+            LinkedList *list, char *familyName, char *firstName,
+            char *address, char *phoneNumber, char *status, char *condition
+        ) {
+
+    while (isEmpty(list) == false) {
+        deleteFrontNode(list, familyName, firstName, address, phoneNumber, status, condition);
+    }
+    list->head = NULL;
 }
