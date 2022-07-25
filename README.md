@@ -1,4 +1,4 @@
-**<h1>Medical Mangement System</h1>**
+**<h1 align = "center">Medical Mangement System</h1>**
 
 *<h2>About the Project</h2>*
 <h3>Languages</h3>
