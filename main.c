@@ -35,7 +35,7 @@ void getCommand(char *input, int inputSize);
 void getInputNode(char *familyName, char *firstName, char *address, char *phoneNumber, char *status, char *condition2);
 Node *createNode(Node *next, char *familyName, char *firstName, char *address, char *phoneNumber, char *status, char *condition);
 void printList(LinkedList *list);
-void printNode(LinkedList *list, char *familyName, char *firstName);
+void printNodePatientName(LinkedList *list, char *familyName, char *firstName);
 bool isEmpty(LinkedList *list);
 void addNodeFront(LinkedList *list, char *familyName, char *firstName, char *address, char *phoneNumber, char *status, char *condition);
 bool deletePatient(LinkedList *list, char *familyName, char *firstName);
@@ -106,7 +106,7 @@ int main(int argc, char* argv[]) {
                 printf("  First name: ");
                 getCommand(firstName, MAX_SIZE);
                 if (searchPatient(list, familyName, firstName)) { // if patient exists, print node
-                    printNode(list, familyName, firstName);
+                    printNodePatientName(list, familyName, firstName);
                 } else { // if patient does not exist, print message
                     printf("\nThere is no such patient named %s %s", firstName, familyName);
                 }
@@ -238,7 +238,7 @@ void printList(LinkedList *list) {
 }
 
 // print node if family name and first name match
-void printNode(LinkedList *list, char *familyName, char *firstName) {
+void printNodePatientName(LinkedList *list, char *familyName, char *firstName) {
     Node *currentNode = list->head;
     printf("\n");
     while (currentNode != NULL) {
