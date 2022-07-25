@@ -20,25 +20,21 @@ typedef struct linkedList {
 } LinkedList;
 
 void getCommand(char *input, int inputSize);
-void getInputNode(
-            char *familyName, char *firstName, char *address,
-            char *phoneNumber, char *doctorName, char *status, char *condition
-        );
+void getInputNode(char *familyName, char *firstName, char *address, char *phoneNumber, char *status, char *condition2);
 Node* createNode(char *familyName, char *firstName, char *address, char *phoneNumber, char *status, char *condition);
 void printNode(LinkedList *list);
 bool isEmpty(LinkedList *list);
-void addNodeFront(
-            LinkedList *list, char *familyName, char *firstName,
-            char *address, char *phoneNumber, char *status, char *condition
-        );
+void addNodeFront(LinkedList *list, char *familyName, char *firstName, char *address, char *phoneNumber, char *status, char *condition);
+bool deletePatient(LinkedList *list, char *familyName, char *firstName);
+bool searchPatient(LinkedList *list, char *familyName, char *firstName);
 
 int main(int argc, char* argv[]) {
     char input[MAX_SIZE + 1], command;
-    char *familyName, *firstName, *address, *phoneNumber, *doctorName, *status, *condition;
+    char *familyName, *firstName, *address, *phoneNumber, *status, *condition;
     const char introString[] 
     = "Medical Management System.\n\n";
 const char functionString[] 
-    = "List of Commands: \n\t - Insert (I) \n\t - Delete (D) \n\t - S (search by name) \n\t "
+    = "List of Commands: \n\t - Insert (I) \n\t - Delete (D) \n\t - S (search by patient's name) \n\t "
       "- P (search by phone number) \n\t - Print (P) \n\t - Reset (R) \n\t - Exit (E)";
 
     LinkedList *list = (LinkedList *)malloc(sizeof(LinkedList));
@@ -61,16 +57,26 @@ const char functionString[]
 
         switch(command) {
             case 'I':
-                getInputNode(familyName, firstName, address, phoneNumber, doctorName, status, condition);
-                if (searchFamilyName(list, familyName)) {
+                getInputNode(familyName, firstName, address, phoneNumber, status, condition);
+                if (searchPatient(list, familyName, firstName) == false) {
                     addNodeFront(list, familyName, firstName, address, phoneNumber, status, condition);
                 } else {
-                    printf("\nFamily name already exists.\n");
+                    printf("\nPatient already exists.\n");
                 }
                 break;
             case 'D':
+                printf("  Family name: ");
+                getCommand(familyName, MAX_SIZE);
+                printf("  First name: ");
+                getCommand(firstName, MAX_SIZE);
+                if (searchPatient(list, familyName, firstName)) {
+                    deletePatient(list, familyName, firstName);
+                } else {
+                    printf("\nThere is no such patient named %s %s", firstName, familyName);
+                }
                 break;
             case 'S':
+
                 break;
             case 'P':
                 break;
@@ -94,22 +100,19 @@ void getCommand(char *input, int inputSize) {
     input[i] = '\0';
 }
 
-void getInputNode(
-        char *familyName, char *firstName, char *address,
-        char *phoneNumber, char *doctorName, char *status, char *condition
-        ) {
-    printf("\n  Family name: ");
-    getCommand(familyName, MAX_SIZE);
-    printf("  First name: ");
-    getCommand(firstName, MAX_SIZE);
-    printf("  Address: ");
-    getCommand(address, MAX_SIZE);
-    printf("  Phone number: ");
-    getCommand(phoneNumber, MAX_SIZE);
-    printf("  Status: ");
-    getCommand(status, MAX_SIZE);
-    printf("  Condition: ");
-    getCommand(condition, MAX_SIZE);
+void getInputNode(char *familyName, char *firstName, char *address, char *phoneNumber, char *status, char *condition) {
+        printf("  Family name: ");
+        getCommand(familyName, MAX_SIZE);
+        printf("  First name: ");
+        getCommand(firstName, MAX_SIZE);
+        printf("  Address: ");
+        getCommand(address, MAX_SIZE);
+        printf("  Phone number: ");
+        getCommand(phoneNumber, MAX_SIZE);
+        printf("  Status: ");
+        getCommand(status, MAX_SIZE);
+        printf("  Condition: ");
+        getCommand(condition, MAX_SIZE);
 }
 
 Node* createNode(char *familyName, char *firstName, char *address, char *phoneNumber, char *status, char *condition) {
@@ -183,10 +186,10 @@ void addNodeInorder(
     }
 }
 
-bool searchFamilyName(LinkedList *list, char *familyName) {
+bool searchPatient(LinkedList *list, char *familyName, char *firstName) {
     Node *currentNode = list->head;
     while (currentNode != NULL) {
-        if (strcmp(familyName, currentNode->familyName) == 0) {
+        if (strcmp(familyName, currentNode->familyName) == 0 && strcmp(firstName, currentNode->firstName) == 0) {
             return true;
         }
         currentNode = currentNode->next;
@@ -205,11 +208,11 @@ bool searchPhoneNumber(LinkedList *list, char *phoneNumber) {
     return false;
 }
 
-bool deleteFamilyName(LinkedList *list, char *familyName) {
+bool deletePatient(LinkedList *list, char *familyName, char *firstName) {
     if (isEmpty(list)) {
         return false;
     }
-    if (strcmp(familyName, list->head->familyName) == 0) {
+    if (strcmp(familyName, list->head->familyName) == 0 && strcmp(firstName, list->head->firstName) == 0) {
         Node *temp = list->head;
         list->head = list->head->next;
         free(temp);
@@ -217,7 +220,7 @@ bool deleteFamilyName(LinkedList *list, char *familyName) {
     }
     Node *currentNode = list->head;
     while (currentNode->next != NULL) {
-        if (strcmp(familyName, currentNode->next->familyName) == 0) {
+        if (strcmp(familyName, currentNode->next->familyName) == 0 && strcmp(firstName, currentNode->next->firstName) == 0) {
             Node *temp = currentNode->next;
             currentNode->next = currentNode->next->next;
             free(temp);
@@ -228,10 +231,17 @@ bool deleteFamilyName(LinkedList *list, char *familyName) {
     return false;
 }
 
-void deleteFrontNode(
-            LinkedList *list, char *familyName, char *firstName,
-            char *address, char *phoneNumber, char *status, char *condition
-        ) {
+void deleteFrontNode
+    (
+        LinkedList *list,
+        char *familyName,
+        char *firstName,
+        char *address,
+        char *phoneNumber,
+        char *status,
+        char *condition
+    ) {
+
     if (isEmpty(list)) {
         return;
     }
@@ -240,10 +250,16 @@ void deleteFrontNode(
     free(temp);
 }
 
-void removeNodes(
-            LinkedList *list, char *familyName, char *firstName,
-            char *address, char *phoneNumber, char *status, char *condition
-        ) {
+void removeNodes
+    (
+       LinkedList *list,
+       char *familyName,
+       char *firstName,
+       char *address,
+       char *phoneNumber,
+       char *status,
+       char *condition
+    ) {
 
     while (isEmpty(list) == false) {
         deleteFrontNode(list, familyName, firstName, address, phoneNumber, status, condition);
