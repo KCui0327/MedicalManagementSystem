@@ -21,7 +21,7 @@ typedef struct linkedList {
 
 void getCommand(char *input, int inputSize);
 void getInputNode(char *familyName, char *firstName, char *address, char *phoneNumber, char *status, char *condition2);
-Node* createNode(char *familyName, char *firstName, char *address, char *phoneNumber, char *status, char *condition);
+Node* createNode(Node *next, char *familyName, char *firstName, char *address, char *phoneNumber, char *status, char *condition);
 void printList(LinkedList *list);
 void printNode(LinkedList *list, char *familyName, char *firstName);
 bool isEmpty(LinkedList *list);
@@ -155,7 +155,7 @@ void getInputNode(char *familyName, char *firstName, char *address, char *phoneN
         getCommand(condition, MAX_SIZE);
 }
 
-Node* createNode(char *familyName, char *firstName, char *address, char *phoneNumber, char *status, char *condition) {
+Node *createNode(Node *next, char *familyName, char *firstName, char *address, char *phoneNumber, char *status, char *condition) {
     Node *newNode = (Node *)malloc(sizeof(Node));
     if (newNode != NULL) {
         newNode->familyName = familyName;
@@ -164,20 +164,24 @@ Node* createNode(char *familyName, char *firstName, char *address, char *phoneNu
         newNode->phoneNumber = phoneNumber;
         newNode->status = status;
         newNode->condition = condition;
-        newNode->next = NULL;
+        newNode->next = next;
     }
     return newNode;
+}
+
+bool isEmpty(LinkedList *list) {
+    return list->head == NULL;
 }
 
 void printList(LinkedList *list) {
     Node *currentNode = list->head;
     while (currentNode != NULL) {
-        printf("\n  Family name: %s", currentNode->familyName);
-        printf("\n  First name: %s", currentNode->firstName);
-        printf("\n  Address: %s", currentNode->address);
-        printf("\n  Phone number: %s", currentNode->phoneNumber);
-        printf("\n  Status: %s", currentNode->status);
-        printf("\n  Condition: %s", currentNode->condition);
+        printf("%s\n", currentNode->familyName);
+        printf("%s\n", currentNode->firstName);
+        printf("%s\n", currentNode->address);
+        printf("%s\n", currentNode->phoneNumber);
+        printf("%s\n", currentNode->status);
+        printf("%s\n", currentNode->condition);
         currentNode = currentNode->next;
     }
 }
@@ -186,28 +190,24 @@ void printNode(LinkedList *list, char *familyName, char *firstName) {
     Node *currentNode = list->head;
     while (currentNode != NULL) {
         if (strcmp(familyName, currentNode->familyName) == 0 && strcmp(firstName, currentNode->firstName) == 0) {
-            printf("\n  Family name: %s", currentNode->familyName);
-            printf("\n  First name: %s", currentNode->firstName);
-            printf("\n  Address: %s", currentNode->address);
-            printf("\n  Phone number: %s", currentNode->phoneNumber);
-            printf("\n  Status: %s", currentNode->status);
-            printf("\n  Condition: %s", currentNode->condition);
+            printf("%s\n", currentNode->familyName);
+            printf("%s\n", currentNode->firstName);
+            printf("%s\n", currentNode->address);
+            printf("%s\n", currentNode->phoneNumber);
+            printf("%s\n", currentNode->status);
+            printf("%s\n", currentNode->condition);
         }
         currentNode = currentNode->next;
     }
 }
 
-bool isEmpty(LinkedList *list) {
-    return list->head == NULL;
-}
-
 void addNodeFront(LinkedList *list, char *familyName, char *firstName, char *address, char *phoneNumber, char *status, char *condition) {
     if (isEmpty(list)) {
-        list->head = createNode(familyName, firstName, address, phoneNumber, status, condition);
+        list->head = createNode(list->head, familyName, firstName, address, phoneNumber, status, condition);
         return;
     } 
 
-    Node *temp = createNode(familyName, firstName, address, phoneNumber, status, condition);
+    Node *temp = createNode(list->head, familyName, firstName, address, phoneNumber, status, condition);
     if (temp != NULL) {
         temp->next = list->head;
         list->head = temp;
@@ -215,29 +215,28 @@ void addNodeFront(LinkedList *list, char *familyName, char *firstName, char *add
 }
 
 void addNodeInorder(LinkedList *list, char *familyName, char *firstName, char *address, char *phoneNumber, char *status, char *condition) {
-
     if (isEmpty(list) || strcmp(familyName, list->head->familyName) < 0) {
         return addNodeFront(list, familyName, firstName, address, phoneNumber, status, condition);
     }
-    Node *newNode = createNode(familyName, firstName, address, phoneNumber, status, condition);
-    if (newNode == NULL) {
-        Node *currentNode = list->head;
-        while (currentNode->next != NULL) {
-            if (strcmp(familyName, currentNode->familyName) < 0) {
-                break;
-            }
-            currentNode = currentNode->next;
+
+    Node *currentNode = list->head;
+    while (currentNode->next != NULL) {
+        if (strcmp(familyName, currentNode->familyName) < 0) {
+            break;
         }
+        currentNode = currentNode->next;
+    }
+    Node *newNode = createNode(currentNode->next, familyName, firstName, address, phoneNumber, status, condition);
+    if (newNode == NULL) {
         newNode->next = currentNode->next;
         currentNode->next = newNode;
-        return;
     }
 }
 
 bool searchPatient(LinkedList *list, char *familyName, char *firstName) {
     Node *currentNode = list->head;
     while (currentNode != NULL) {
-        if (strcmp(familyName, currentNode->familyName) == 0 && strcmp(firstName, currentNode->firstName) == 0) {
+        if (strcmp(currentNode->familyName, familyName) == 0 && strcmp(firstName, currentNode->firstName) == 0) {
             return true;
         }
         currentNode = currentNode->next;
@@ -261,20 +260,21 @@ bool deletePatient(LinkedList *list, char *familyName, char *firstName) {
         return false;
     }
     if (strcmp(familyName, list->head->familyName) == 0 && strcmp(firstName, list->head->firstName) == 0) {
-        Node *temp = list->head;
-        list->head = list->head->next;
-        free(temp);
+        Node *temp = list->head->next;
+        free(list->head);
+        list->head = temp;
         return true;
     }
     Node *currentNode = list->head;
-    while (currentNode->next != NULL) {
-        if (strcmp(familyName, currentNode->next->familyName) == 0 && strcmp(firstName, currentNode->next->firstName) == 0) {
-            Node *temp = currentNode->next;
-            currentNode->next = currentNode->next->next;
-            free(temp);
-            return true;
-        }
+
+    while (currentNode->next != NULL && strcmp(familyName, currentNode->next->familyName) != 0 && strcmp(firstName, currentNode->next->firstName) != 0) {
         currentNode = currentNode->next;
+    }
+
+    if (currentNode->next != NULL) {
+        Node *temp = currentNode->next;
+        currentNode->next = temp->next;
+        return true;
     }
     return false;
 }
