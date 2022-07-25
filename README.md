@@ -17,12 +17,9 @@
 
 
 <h3>Description</h3>
-> This program composes of a medical management system that allows the user to 
-> create, modify, and delete patients, and their medical records. Each insertion of data
-> is checked for validity, and if invalid, the user is prompted to enter valid data.
-> The user is also able to search for a patient by name, status, and condition. 
-> The user can also view the records of all patients. User can reset the system and
-> start over. 
+<p> This program composes of a medical management system that allows the user to  create, modify, and delete patients, and their medical records. Each insertion of data
+is checked for validity, and if invalid, the user is prompted to enter valid data. The user is also able to search for a patient by name, status, and condition. 
+The user can also view the records of all patients. User can reset the system and start over. </p>
 
 *<h2>Contact</h3>*
 <ul>
