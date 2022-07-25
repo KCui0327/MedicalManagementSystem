@@ -29,6 +29,10 @@ void addNodeFront(LinkedList *list, char *familyName, char *firstName, char *add
 bool deletePatient(LinkedList *list, char *familyName, char *firstName);
 bool searchPatient(LinkedList *list, char *familyName, char *firstName);
 bool searchPhoneNumber(LinkedList *list, char *phoneNumber);
+bool searchStatus(LinkedList *list, char *status);
+bool searchCondition(LinkedList *list, char *condition);
+void printNodeStatus(LinkedList *list, char *status);
+void printNodeCondition(LinkedList *list, char *phoneNumber);
 void addNodeInorder(LinkedList *list, char *familyName, char *firstName, char *address, char *phoneNumber, char *status, char *condition);
 void removeNodes(LinkedList *list, char *familyName, char *firstName, char *address, char *phoneNumber, char *status, char *condition);
 void freeVariables(char *familyName, char *firstName, char *address, char *phoneNumber, char *status, char *condition);
@@ -40,7 +44,8 @@ int main(int argc, char* argv[]) {
             = "Medical Management System.\n\n";
     const char functionString[]
             = "List of Commands: \n - Insert (I) \n - Delete (D) \n - S (search by patient's name) \n "
-              "- N (search by phone number) \n - Print (P) \n - Reset (R) \n - Exit (E)";
+              "- L (search by status) \n - O (search by condition) \n - Q (quit) \n"
+              " - N (search by phone number) \n - Print (P) \n - Reset (R) \n - Exit (E)";
 
     LinkedList *list = (LinkedList *)malloc(sizeof(LinkedList));
     list->head = NULL;
@@ -80,6 +85,7 @@ int main(int argc, char* argv[]) {
                 } else {
                     printf("\nThere is no such patient named %s %s", firstName, familyName);
                 }
+                freeVariables(familyName, firstName, address, phoneNumber, status, condition);
                 break;
             case 'S':
                 printf("  Family name: ");
@@ -88,9 +94,28 @@ int main(int argc, char* argv[]) {
                 getCommand(firstName, MAX_SIZE);
                 if (searchPatient(list, familyName, firstName)) {
                     printNode(list, familyName, firstName);
-                    freeVariables(familyName, firstName, address, phoneNumber, status, condition);
                 } else {
                     printf("\nThere is no such patient named %s %s", firstName, familyName);
+                }
+                freeVariables(familyName, firstName, address, phoneNumber, status, condition);
+                break;
+            case 'L':
+                printf("  Status: ");
+                getCommand(status, MAX_SIZE);
+                if (searchStatus(list, status)) {
+                    printNodeStatus(list, status);
+                } else {
+                    printf("\nThere is no patient with status \"%s\"", status);
+                }
+                freeVariables(familyName, firstName, address, phoneNumber, status, condition);
+                break;
+            case 'O':
+                printf("  Condition: ");
+                getCommand(condition, MAX_SIZE);
+                if (searchCondition(list, condition)) {
+                    printNodeCondition(list, condition);
+                } else {
+                    printf("\nThere is no patient with condition \"%s\"", condition);
                 }
                 freeVariables(familyName, firstName, address, phoneNumber, status, condition);
                 break;
@@ -98,7 +123,7 @@ int main(int argc, char* argv[]) {
                 printf("  Phone number: ");
                 getCommand(phoneNumber, MAX_SIZE);
                 if (searchPhoneNumber(list, phoneNumber)) {
-                    printList(list);
+                    printNode(list, familyName, firstName);
                 } else {
                     printf("\nThere is no patient with this phone number %s", phoneNumber);
                 }
@@ -118,7 +143,6 @@ int main(int argc, char* argv[]) {
                 break;
             case 'E':
                 removeNodes(list, familyName, firstName, address, phoneNumber, status, condition);
-                printf("\nSystem has been exited.\n");
                 break;
             default:
                 printf("\nInvalid command.\n\n");
@@ -127,6 +151,11 @@ int main(int argc, char* argv[]) {
         }
 
     } while (command != 'E');
+
+    removeNodes(list, familyName, firstName, address, phoneNumber, status, condition);
+    free(list);
+
+    printf("\nSystem has been exited.\n");
 
     return 0;
 }
@@ -205,6 +234,36 @@ void printNode(LinkedList *list, char *familyName, char *firstName) {
     }
 }
 
+void printNodeStatus(LinkedList *list, char *status) {
+    Node *currentNode = list->head;
+    while (currentNode != NULL) {
+        if (strcmp(status, currentNode->status) == 0) {
+            printf("%s\n", currentNode->familyName);
+            printf("%s\n", currentNode->firstName);
+            printf("%s\n", currentNode->address);
+            printf("%s\n", currentNode->phoneNumber);
+            printf("%s\n", currentNode->status);
+            printf("%s\n", currentNode->condition);
+        }
+        currentNode = currentNode->next;
+    }
+}
+
+void printNodeCondition(LinkedList *list, char *condition) {
+    Node *currentNode = list->head;
+    while (currentNode != NULL) {
+        if (strcmp(condition, currentNode->condition) == 0) {
+            printf("%s\n", currentNode->familyName);
+            printf("%s\n", currentNode->firstName);
+            printf("%s\n", currentNode->address);
+            printf("%s\n", currentNode->phoneNumber);
+            printf("%s\n", currentNode->status);
+            printf("%s\n", currentNode->condition);
+        }
+        currentNode = currentNode->next;
+    }
+}
+
 void addNodeFront(LinkedList *list, char *familyName, char *firstName, char *address, char *phoneNumber, char *status, char *condition) {
     if (isEmpty(list)) {
         list->head = createNode(list->head, familyName, firstName, address, phoneNumber, status, condition);
@@ -243,6 +302,28 @@ bool searchPatient(LinkedList *list, char *familyName, char *firstName) {
     Node *currentNode = list->head;
     while (currentNode != NULL) {
         if (strcmp(currentNode->familyName, familyName) == 0 && strcmp(firstName, currentNode->firstName) == 0) {
+            return true;
+        }
+        currentNode = currentNode->next;
+    }
+    return false;
+}
+
+bool searchStatus(LinkedList *list, char *status) {
+    Node *currentNode = list->head;
+    while (currentNode != NULL) {
+        if (strcmp(currentNode->status, status) == 0) {
+            return true;
+        }
+        currentNode = currentNode->next;
+    }
+    return false;
+}
+
+bool searchCondition(LinkedList *list, char *condition) {
+    Node *currentNode = list->head;
+    while (currentNode != NULL) {
+        if (strcmp(currentNode->condition, condition) == 0) {
             return true;
         }
         currentNode = currentNode->next;
